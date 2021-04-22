@@ -1,0 +1,194 @@
+section {
+    margin: 0;
+    padding: .5rem;
+    max-width: 900px;
+}
+
+ul, details {
+    margin: 0;
+    padding: 0;
+}
+
+figure img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+figure span {
+    text-align: center;
+}
+
+figcaption {
+    text-align: center;
+}
+
+img {
+    max-width: 75%;
+}
+
+.fileLoadOutput {
+    border: 2px solid black;
+    background-color: lightgray;
+}
+
+.fileLoadOutput button {
+    height: 3rem;
+    color: white;
+    margin: 2rem;
+    background-color: blueviolet;
+}
+
+textarea {
+    max-width: 95%;
+}
+
+.quiz {
+    padding: .5rem;
+}
+
+.quiz label, .quiz input{
+    font-size: 1.5rem;
+}
+
+.quiz h1 {
+    text-align: center;
+}
+
+input#response {
+    width: 95%;
+}
+
+.quiz #feedback {
+    font-size: 1.2rem;
+    text-align: center;
+    border: 1px solid black;
+}
+
+.not-answered {
+    color: green;
+    background-color: lightgray;
+}
+
+.correct {
+    color: blue;
+    background-color: greenyellow;
+}
+
+.incorrect {
+    color: white;
+    background-color: red;
+}
+
+.quote::before, .quote::after {
+    content: "\"";
+}
+
+.quizCard {
+    font-size: 1.2rem;
+    margin: 0 .5rem;
+    padding: .5rem;
+    border-radius: .5rem;
+}
+
+.quizCard .note button, 
+.note .source button {
+    display: none;
+}
+
+ul {
+    list-style: none;
+}
+
+ol {
+    margin-left: 2rem;
+}
+
+.note {
+    border: 1px solid black;
+    border-radius: .5rem;
+    padding: .5rem;
+}
+
+.source {
+    border-bottom: 1px groove black;
+    border-left: 1px groove black;
+    border-right: 1px groove black;
+    border-radius: 1rem;
+    margin-top: .5rem;
+    padding: .5rem;
+    box-shadow: lightgrey 3px 3px;
+}
+
+/* 
+    Make it so that if the section.quizCard > is NOT div.quizCard#newSlug
+    then .saveNew highlighted
+*/
+div.quizCard#newSlug ~ .saveNew {
+    display: none;
+}
+
+div.quizCard:not(#newSlug) ~ .saveNew {
+    display: inline;
+    background-color: green;
+    color: white;
+}
+
+.imagePreview[src] {
+    border: 1px solid black;
+}
+
+.imagePreview:not([src]) {
+    display: none;
+}
+
+section.quiz, section.editObj {
+    border: 2px solid black;
+}
+
+section.editObj:not(.add) .add,
+section.editObj:not(.source) .source,
+section.editObj:not(.note) .note,
+section.editObj:not(.quizCard) .quizCard {
+    display: none;
+}
+
+.text {
+    padding: .5rem;
+    border-radius: .5rem;
+    margin: 1rem 0;
+    white-space: pre-wrap;
+}
+
+.textEdit {
+    width: 75%;
+}
+
+.question {
+    background-color: lightcoral;
+}
+
+.quote {
+    background-color: lightblue;
+}
+
+.lesson {
+    background-color: lightgreen;
+}
+
+.term {
+    background-color: pink;
+}
+
+.card {
+    border: 2px solid black;
+}
+
+.source p {
+    padding-left: 22px;
+    text-indent: -22px;
+}
+
+.collection {
+    font-style: italic;
+}

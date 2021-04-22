@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SNQ - Sources, Notes, and Quiz Cards</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="application-name" content="Sources Notes Quiz Cards (SNQ)" />
+    <meta name="author" content="Joe Roper" />
+    <meta name="description" content="A learning tool focusing on source material (books, informational websites, etc), notes, and reinforcement of the notes. This is a browser application intended to run solely on the browser. No server or network required!" />
+    <script src="../public/js/SNQ.js" defer></script>
+    <!--<script src="test.js" defer></script>-->
+    <link rel="stylesheet" href="../public/css/SNQ.css" />
+</head>
+<body>
+    <div id="templates">
+        <template id="main">
+            <details class="quizCards">
+                <summary>Quiz Cards</summary>
+            </details>
+            <details class="notes">
+                <summary>Notes</summary>
+            </details>
+            <details class="sources">
+                <summary>Sources</summary>
+            </details>
+        </template>
+
+        <template id="note">
+            <div class="note">
+                <figure>
+                    <img />
+
+                    <figcaption></figcaption>
+                </figure>
+                <h3 class="text"></h3>
+
+                <details class="sourceSlugs">
+                    <summary>Source(s)</summary>
+                </details>
+
+                <label id="toEdit">
+                    Check here to mark note for editing or deleting
+                </label>
+                <input class="toEdit" type="checkbox" aria-labelledby="toEdit" />
+            </div>
+        </template>
+
+        <template id="quizCard">
+            <fieldset class="quizCard">
+                <legend>Quiz Card</legend>
+                <figure>
+                    <img />
+                    <figcaption></figcaption>
+                </figure>
+                <label class="prompt"></label>
+                <input class="userInput" /><br />
+
+                <details class="response">
+                    <summary>Toggle Correct Responses</summary>
+                </details>
+                <details class="note">
+                    <summary>Toggle Notes for this Quiz Card</summary>
+                </details>
+
+                <label id="toEdit">
+                    Check here to mark quiz card for editing or deleting
+                </label>
+                <input class="toEdit" type="checkbox" aria-labelledby="toEdit" />
+            </fieldset>
+        </template>
+
+        <template id="source">
+            <div class="source">
+                <p>
+                    <span class="authors"></span>
+                    . (<span class="datePub"></span>)
+                    <span class="title"></span>
+                    . <span class="collection"></span>
+                    <span class="dateRetrieved"></span>
+                    . Retrieved from <a class="retrievedFrom" href="" target="_blank"></a>
+                </p>
+
+                <label id="toEdit">
+                    Check here to mark source for editing or deleting
+                </label>
+                <input class="toEdit" type="checkbox" aria-labelledby="toEdit" />
+                
+            </div>
+        </template>
+
+    </div>
+
+    <main id="insert">
+        <section class="quiz" id="_0">
+            <h1>Here is your current Quiz Card</h1>
+            <h3>You have <span id="numberRemaining">0</span> questions left to get correct more times than incorrect.</h3>
+            <figure>
+                <img src="../public/images/welcome.png" />
+                <figcaption></figcaption>
+            </figure>
+            <label id="prompt" for="response"></label><br />
+            <input id="response" type="text" />
+            <datalist id="choiceList"></datalist>
+            <br />
+            <button id="previous">Previous Quiz Card</button>
+            <button id="checkAnswer">Check Answer</button>
+            <button id="next">Next</button>
+            <p class="not-answered" id="feedback" aria-live="assertive" aria-relevant="text">Please answer</p>
+            <div class="note"></div>
+        </section>
+
+        <section class="fileLoadOutput">
+            <label for="fileSelect">
+                Select a JSON file
+                <input type="file" id="fileSelect" name="fileSelect" accept=".json" />
+            </label>
+            <br />
+            <button class="createNew">Create New (NOTE: If you made changes to current set, save them first!)</button>
+            <br />
+            <button class="jsonOutput" title="This loads the text of the JSON file into the text area (collapsed below)">
+                Click to show current JSON file
+            </button>
+            <button class="reload">Reload the File</button>
+            <button class="slugBath" title="Mostly, this cleans up any discrepancies with the record 'slugs' (a wordier ID that helps you and the program identify what record is being referenced)">
+                Prepare File for Saving
+            </button>
+            <br />
+            <details>
+                <summary>The JSON file</summary>
+                When you are ready, you can save changes you made by copying below and pasting into your JSON file.
+                <textarea id="jsonDisplay" rows="50" cols="100"></textarea>
+            </details>
+        </section>
+
+        <section class="editObj add">
+            <h1>This is where you edit or add</h1>
+
+            <!-- This is for adding new object -->
+            <div class="add">
+                <ol>
+                    So, here's what you do:
+                    <li>Select what you are editing</li>
+                    <li>Fill in the fields that appear</li>
+                </ol>
+                <label for="whatEdit">What are you editing</label>
+                <select id="whatEdit">
+                    <option value="add" selected>Select a Record Type</option>
+                    <option value="source">Source</option>
+                    <option value="note">Note</option>
+                    <option value="quizCard">Quiz Card</option>
+                </select>
+            </div>
+
+            <!-- This is for editing a source -->
+            <div class="source" id="newSlug">
+                <label id="authorsLbl">Enter one or more authors</label>
+                <ol id="authors">
+                    <li><input aria-labelledby="authorsLbl" /></li>
+                    <li><button class="addInput">Add New Author</button></li>
+                </ol>
+                <label for="title">Enter title</label>
+                <input id="title" /><br />
+                <label>Enter name on collection if applicable (e.g. periodical title, series title)</label>
+                <input id="collection" /><br />
+                <label for="retrievedFrom">Enter the URL if this is from a website</label>
+                <input id="retrievedFrom" /><br />
+                <label for="datePub">Enter published or last updated date, if available</label>
+                <input id="datePub" type="date" /><br />
+                <label for="dateRetrieved">Enter date you retrieved source, if retrieved online</label>
+                <input id="dateRetrieved" type="date" /><br />
+            </div>
+
+            <!-- This is for editing a note -->
+            <div class="note" id="newSlug">
+                <label for="type">Choose Note Type</label>
+                <select id="type">
+                    <option value="" selected>Select what type of note this is</option>
+                    <option value="question">Question or unverified observation</option>
+                    <option value="lesson">Information verified by source</option>
+                    <option value="quote">Exact quote from source</option>
+                </select><br />
+                <label for="text">Enter text for note</label>
+                <input id="text" /><br />
+                <label for="image">Enter path or relative path for image</label>
+                <input id="image" list="images" /><br />
+                <img class="imagePreview" /><br />
+                <label for="caption">Enter Caption and alternate text for image</label>
+                <input id="caption" /><br />
+                <label id="sourceSlugsLbl">Select source that verifies this note</label>
+                <datalist id="sourceSlugList">
+                </datalist>
+                <ul id="sourceSlugs">
+                    <li>
+                        <input list="sourceSlugList" aria-labelledby="sourceSlugsLbl" />
+                    </li>
+                    <li><button class="addInput">Add a Source</button></li>
+                </ul>
+            </div>
+
+            <!-- This is for editing a quiz card -->
+            <div class="quizCard" id="newSlug">
+                <label for="type">Select what type of quiz card</label>
+                <select id="type">
+                    <option value="promptResponse" selected>Simple flashcard</option>
+                    <option value="inOrder">Answer in an ordered list</option>
+                    <option value="noOrder">Multiple answers required, but not in order</option>
+                    <option value="fillBlank">Fill in the Blank</option>
+                </select><br />
+                <label for="prompt">Enter Prompt for quiz card</label>
+                <input id="prompt" /><br />
+                <label id="responsesLbl">Enter acceptable responses to prompt</label>
+                <ul id="responses">
+                    <li><input aria-labelledby="responsesLbl" /></li>
+                    <li><button class="addInput">Add an Acceptable Response</button></li>
+                </ul>
+                <details>
+                    <summary>Advanced Edit</summary>
+                    <label for="prefill">Have something already filled in the response field</label>
+                    <input id="prefill" /><br />
+                    <label for="inputInstruction">If not, have instructions in field that are not user's response</label>
+                    <input id="inputInstruction" /><br />
+                    <label id="choicesLbl">Want to list possible answers? (Sort of like multiple choice, but user can type own answer)</label>
+                    <ul id="choices">
+                        <li><input aria-labelledby="choicesLbl" /></li>
+                        <li><button class="addInput">Add Choice</button></li>
+                    </ul>
+                    <label for="image">Enter path or relative path for image</label>
+                    <input id="image" list="images" />
+                    <datalist id="images"></datalist>
+                    <br />
+                    <img class="imagePreview" /><br />
+                    <label for="caption">Enter caption and alt for image</label>
+                    <input id="caption" /><br />
+                    <label for="studyDay">Don't want to study this today? How many days until you do?</label>
+                    <input type="number" id="studyDay" min="0" value="0" />
+                </details>
+                <label id="noteSlugsLbl">Select notes that are linked to this quiz card</label>
+                <datalist id="noteSlugList">
+                </datalist>
+                <ul id="noteSlugs">
+                    <li>
+                        <input list="noteSlugList" aria-labelledby="noteSlugsLbl" />
+                    </li>
+                    <li><button class="addInput">Add a Note</button></li>
+                </ul>
+            </div>
+
+            <button class="saveBtn">Save!</button>
+            <button class="saveNew">Save as New</button>
+            <button class="backToSelect">Different Record</button>
+            <button class="editNext">Next Item to Edit</button>
+        </section>
+
+        <section class="displayFile"></section>
+    </main>
+</body>
+</html>
