@@ -310,18 +310,7 @@ let daysSince = (date) => {
 
 let toStudy = (studyCard) => {
     if (daysSince(store.quizQueueDates.start) >= studyCard.studyDay) return true;
-
-    // Below will be removed later
-    if (studyCard.period <= 1) return true;
-    let currentDayNumber = daysSince(store.quizQueueDates.start) % studyCard.period;
-    let missedDays = daysSince(store.quizQueueDates.lastStudy);
-    let missedStudy = store.quizQueueDates?.lastStudy ?
-        missedDays >= studyCard.period || missedDays >= currentDayNumber
-        : false;
-    if (missedStudy) return true;
-    if (!store.quizQueueDates && studyCard.period > 1) return false;
-    if (daysSince(store.quizQueueDates.start) === 0) return false;
-    return currentDayNumber === studyCard.dayNumber;
+    if (studyCard.period || studyCard.studyDay) alert('Set needs to be updated. quizQueue has invalid properties.');
 }
 
 let changeCardFrequency = (studyCard, isCorrect) => {
@@ -534,11 +523,7 @@ const inputsToObject = (editForm) => {
     let newObj = {};
     newObj.slug = editForm.id;
     inputs.forEach(input => {
-        // Maybe send this to a func to establish prop?
         if (!input.id) {
-            // parent.parent a bit sloppy
-            // est in <li> first? Then check id <ul>/<ol>?
-            // failing that, use more context?
             let list = input.parentElement.parentElement;
             if (!list.id) {
                 console.log('Missing ID for', list);
@@ -944,7 +929,6 @@ const saveRecord = (button, isNew = false) => {
 const addInput = (button) => {
     listItem = button.parentElement;
     list = button.parentElement.parentElement;
-    // Perhaps later we'll clone everything inside the first listItem to put in new listItem
     // Or use insertBelow the previousSibling of the button list item
     let newInput = list.querySelector('input, select').cloneNode(true);
     newInput.value = null;
