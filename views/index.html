@@ -161,11 +161,11 @@
                 <h2>Source</h2>
                 <label id="authorsLbl">Enter one or more authors</label>
                 <ul id="authors">
-                    <li><input aria-labelledby="authorsLbl" /></li>
+                    <li><input aria-labelledby="authorsLbl" required /></li>
                     <li><button class="addInput">Add New Author</button></li>
                 </ul>
                 <label for="title">Enter title</label>
-                <input id="title" /><br />
+                <input id="title" required /><br />
                 <label>Enter name on collection if applicable (e.g. periodical title, series title)</label>
                 <input id="collection" /><br />
                 <label for="retrievedFrom">Enter the URL if this is from a website</label>
@@ -180,14 +180,14 @@
             <div class="note" data-slug="newSlug">
                 <h2>Note</h2>
                 <label for="type">Choose Note Type</label>
-                <select id="type">
+                <select id="type" required>
                     <option value="" selected>Select what type of note this is</option>
                     <option value="question">Question or unverified observation</option>
                     <option value="lesson">Information verified by source</option>
                     <option value="quote">Exact quote from source</option>
                 </select><br />
                 <label for="text">Enter text for note</label>
-                <input id="text" /><br />
+                <input id="text" required /><br />
                 <label for="image">Enter path or relative path for image</label>
                 <input id="image" list="images" /><br />
                 <img class="imagePreview" /><br />
@@ -215,10 +215,10 @@
                     <option value="fillBlank">Fill in the Blank</option>
                 </select><br />
                 <label for="prompt">Enter Prompt for quiz card</label>
-                <input id="prompt" /><br />
+                <input id="prompt" required /><br />
                 <label id="responsesLbl">Enter acceptable responses to prompt</label>
                 <ul id="responses">
-                    <li><input aria-labelledby="responsesLbl" /></li>
+                    <li><input aria-labelledby="responsesLbl" required /></li>
                     <li><button class="addInput">Add an Acceptable Response</button></li>
                 </ul>
                 <label id="noteSlugsLbl">Select notes that are linked to this quiz card</label>
@@ -226,7 +226,7 @@
                 </datalist>
                 <ul id="noteSlugs">
                     <li>
-                        <input list="noteSlugList" aria-labelledby="noteSlugsLbl" />
+                        <input list="noteSlugList" aria-labelledby="noteSlugsLbl" required />
                     </li>
                     <li><button class="addInput">Add a Note</button></li>
                 </ul>

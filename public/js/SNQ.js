@@ -140,7 +140,7 @@ let isEmpty = (object, id = null, array = null) => {
 
 let createItem = (array) => {
     if (!Array.isArray(array)) {
-        console.log('Cannot create item on something that is not an array', array);
+        console.error('Cannot create item on something that is not an array', array);
         return;
     }
     let lastItem = array[array.length - 1];
@@ -275,6 +275,7 @@ const slugBath = (store) => {
 }
 
 const slugMaker = (string, limit = 10) => {
+    if (string == null) string = ""
     const toAbreve = [
         { from: 'william', to: 'wm' },
         { from: 'assign', to: 'asgn' },
@@ -298,12 +299,7 @@ const slugMaker = (string, limit = 10) => {
     ];
     const toExclude = ['a', 'an', 'are', 'be', 'can', 'introduction', 'intro', 'the', 'when', 'at', 'to', 'you', 'your', 'with', 'following', 'is', 'if', 'for', 'it', 's', 'consider', 'considered', 'both', 'use', 'used'];
 
-    if (string === null || string === undefined) {
-        console.log(`Received bad string: ${string} with limit ${limit}`);
-        return 'Uh oh!';
-    }
-
-    let array = string.trim().toLowerCase().split(/[ '.,-:)(]/)
+    let array = string.trim().toLowerCase().split(/\W/)
         .filter(x => toExclude.find(i => i === x) === undefined)
         .map((x, index) => {
             let checkAbreve = toAbreve.find(item => item.from === x);
@@ -409,7 +405,7 @@ const objectIntoElement = (object, elem) => {
             let day = date.getDate()
             input.value = `${year}-${month >= 10 ? month : '0' + month}-${day >= 10 ? day : '0' + day}`
         }
-        if (prop !== 'slug' && !input) console.log('Uh oh! Not found in HTML:', prop, object[prop])
+        if (prop !== 'slug' && !input) console.error('Not found in HTML:', prop, object[prop])
         if (prop === 'image')
             elem.querySelector('.imagePreview').setAttribute('src', `../public/images/${object[prop]}`);
     }
@@ -418,7 +414,7 @@ const objectIntoElement = (object, elem) => {
 let recordIntoEditor = (record) => {
     let invalid = !record || !record.slug || !record.array;
     if (invalid) {
-        console.log('Record not valid', record);
+        console.error('Record not valid', record);
         return;
     }
 
@@ -440,7 +436,7 @@ let forCard = (card) => {
         || !Array.isArray(card?.responses)
         || !Array.isArray(card?.noteSlugs);
     if (invalidCard) {
-        console.log('Please Fix. Invalid quiz card:', card);
+        console.error('Please Fix. Invalid quiz card:', card);
         if (card) store.editQueue.push({slug: card.slug, array: 'quizCard'})
         return;
     }
@@ -470,7 +466,7 @@ let forCard = (card) => {
     card.noteSlugs.forEach(x => {
         let cardNote = readItem(x, store.notes);
         if (!cardNote) {
-            console.log('Invalid note slug:', x);
+            console.error('Invalid note slug:', x);
             return;
         }
         note.appendChild(forNote(cardNote));
@@ -481,11 +477,12 @@ let forCard = (card) => {
 
 let forNote = (note) => {
     let invalidNote = !note.slug
-        || !Array.isArray(note.sourceSlugs);
+        || !note.text;
     if (invalidNote) {
-        console.log('Invalid note:', note);
+        console.error('Invalid note:', note);
         return;
     }
+    if (!note.sourceSlugs) note.sourceSlugs = []
 
     let rtnNote = document.querySelector('#note').content.cloneNode(true);
     let [noteDiv, figure, text, sourceSlugs] = getElements(rtnNote, '.note', 'figure', '.text', '.sourceSlugs')
@@ -500,13 +497,12 @@ let forNote = (note) => {
     note.sourceSlugs.forEach(x => {
         let src = readItem(x, store.sources);
         if (src) sourceSlugs.appendChild(forSource(src));
-        if (!src) {
-            console.log('This is a question type note.', note);
-            let noSource = document.createElement('p');
-            noSource.textContent = 'This note is not linked to a source.';
-            sourceSlugs.appendChild(noSource);
-        }
     });
+    if (note.sourceSlugs.length === 0) {
+        let noSource = document.createElement('p');
+        noSource.textContent = 'This note is not linked to a source.';
+        sourceSlugs.appendChild(noSource);
+    }
 
     return rtnNote;
 }
@@ -515,7 +511,7 @@ let forSource = (source) => {
     let invalidSource = !source || !source.slug
         || !Array.isArray(source?.authors);
     if (invalidSource) {
-        console.log('Invalid source:', source);
+        console.error('Invalid source:', source);
         return;
     }
 
@@ -625,6 +621,11 @@ const setFigure = (figure, record) => {
 }
 
 const fillDatalist = (datalist, array, optionText = null) => {
+    let invalid = !Array.isArray(array) || !datalist
+    if (invalid) {
+        console.error('Missing information. Check array or datalist', array, datalist)
+        return
+    }
     clearElem(datalist);
     array.forEach(x => {
         let opt = document.createElement('option')
@@ -660,7 +661,7 @@ const loadDatalistsIntoEditor = (datalists) => {
 const inputsToObject = (editForm) => {
     let inputs = editForm.querySelectorAll('input, select');
     if (!inputs) {
-        console.log('The edit form could not be used:', editForm);
+        console.error('The edit form could not be used:', editForm);
         return;
     }
 
@@ -670,7 +671,7 @@ const inputsToObject = (editForm) => {
         if (!input.id) {
             let list = input.parentElement.parentElement;
             if (!list.id) {
-                console.log('Missing ID for', list);
+                console.error('Missing ID for', list);
                 return;
             }
             if (!newObj[list.id] && input.value) newObj[list.id] = [];
@@ -715,6 +716,7 @@ const load = () => {
     document.querySelector('.saveBtn').disabled = true;
     setUpQuizQueue(store)
     fillListsWithRecords(store)
+    if (!store.images) store.images = []
     console.log('File loaded!', store);
 }
 
@@ -761,7 +763,7 @@ let cardIntoQuiz = (studyCard) => {
     if (invalid)
         console.log(studyCard ? 'Study card not valid' : 'All out of cards! Good work today!', studyCard);
     let quizCard = readItem(studyCard?.slug, store.quizCards);
-    if (!quizCard && !invalid) console.log('Quiz Card not available or does not match ID:', studyCard);
+    if (!quizCard && !invalid) console.error('Quiz Card not available or does not match ID:', studyCard);
     if (invalid || !quizCard) return;
 
     let quizSection = document.querySelector('.quiz');
@@ -864,8 +866,30 @@ const saveRecord = (button, isNew = false) => {
     let recordType = mainEditor.classList[1];
     let arrayName = recordType + 's';
     let array = store[arrayName];
+    if (!array) return
 
     let [editForm, image] = getElements(mainEditor, `.${recordType}`, '#image')
+
+    let requiredInputs = editForm.querySelectorAll(':required')
+    if (requiredInputs) {
+        requiredInputs.forEach(x => {
+            if (!x.value) {
+                x.classList.add('needInput')
+                let errMessage = document.createElement('span')
+                errMessage.className = 'error'
+                errMessage.textContent = 'Please enter a value'
+                x.insertAdjacentElement('afterEnd', errMessage)
+                button.disabled = true
+            }
+            if (x.value) x.classList.remove('needInput')
+        })
+    }
+    if (editForm.querySelector('.needInput')) {
+        return
+    }
+    editForm.querySelectorAll('.error').forEach(x => {
+        x.parentElement.removeChild(x)
+    })
     
     if (isNew) editForm.setAttribute('data-slug', 'newSlug')
     let newObject = inputsToObject(editForm);
@@ -906,8 +930,7 @@ const saveRecord = (button, isNew = false) => {
         updateItem(newObject.slug, array, newObject) : array.push(newObject);
     
     let records = document.querySelectorAll(`[data-slug=${newObject.slug}]`)
-    records.forEach(x => {
-        console.log(x)
+    if (records) records.forEach(x => {
         if (x.classList.contains('quiz')) {
             cardIntoQuiz(newObject)
             x.querySelector('input.toEdit').checked = false
@@ -919,7 +942,8 @@ const saveRecord = (button, isNew = false) => {
     if (!displayFile.querySelector(`[data-slug=${newObject.slug}]`)) {
         let listItem = document.createElement('li')
         let list = displayFile.querySelector(`ul.${arrayName}`)
-        listItem.appendChild(dispObject(newObject, recordType))
+        let display = dispObject(newObject, recordType)
+        if (display) listItem.appendChild(display)
         list.appendChild(listItem)
     }
 
@@ -952,7 +976,13 @@ const checkAnswer = (button) => {
         })
         let getRight = document.createElement('li')
         getRight.textContent = `You will need to answer correctly ${answersTilDone(studyCard)} times.`
-        if (studyCard.mnemonic) getRight.textContent += ` Remember: ${studyCard.mnemonic}`
+        if (studyCard.mnemonic) {
+            getRight.textContent += ' '
+            let mnemSpan = document.createElement('span')
+            mnemSpan.className = 'mnemonic'
+            mnemSpan.textContent += `Remember: ${studyCard.mnemonic}`
+            getRight.appendChild(mnemSpan)
+        }
         if (studyCard.dayIncrease <= -2 && !studyCard.mnemonic || studyCard.dayIncrease <= -4) {
             let mnemonic = document.getElementById('mnemonic').content.cloneNode(true)
             getRight.appendChild(mnemonic)
@@ -1155,13 +1185,13 @@ document.querySelector('.quiz').addEventListener('keydown', e => {
 document.addEventListener('change', e => {
     if (e.target.className === 'toEdit') {
         let slug = e.target.parentElement.getAttribute('data-slug');
-        if (!slug) console.log('This element does not have your slug:', e.target);
+        if (!slug) console.error('This element does not have your slug:', e.target);
         let objType = e.target.parentElement.className;
         if (objType === 'quiz') objType = 'quizCard'
         let validType = objType === 'source'
             || objType === 'note'
             || objType === 'quizCard';
-        if (!validType) console.log('You have the wrong record type', objType, e.target.parentElement);
+        if (!validType) console.error('You have the wrong record type', objType, e.target.parentElement);
         if (!store.editQueue) store.editQueue = [];
         if (e.target.checked && !store.editQueue.includes({ slug: slug, array: objType })) {
             store.editQueue.push({ slug: slug, array: objType });
